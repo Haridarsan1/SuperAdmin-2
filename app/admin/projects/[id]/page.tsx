@@ -1,21 +1,31 @@
+// app/admin/projects/[id]/page.tsx
 import { createClient } from "@/lib/supabase/server"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { ProjectOverview } from "@/components/admin/project-overview"
 import { TeamManagement } from "@/components/admin/team-management"
 import { ProjectSettings } from "@/components/admin/project-settings"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProjectDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
   const { id } = await params
   const supabase = await createClient()
-  const { data: user } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // CRITICAL: Block unauthenticated users
+  if (!user) {
+    redirect("/login")
+  }
 
   // Verify user is admin of this project
   const { data: projectMember } = await supabase
     .from("project_members")
     .select("*")
     .eq("project_id", id)
-    .eq("user_id", user?.id)
+    .eq("user_id", user.id)  // ← NOW 100% SAFE
     .eq("role", "ADMIN")
     .single()
 
@@ -24,7 +34,15 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   }
 
   // Get project details
-  const { data: project } = await supabase.from("projects").select("*").eq("id", id).single()
+  const { data: project } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("id", id)
+    .single()
+
+  if (!project) {
+    notFound()
+  }
 
   // Get team members
   const { data: teamMembers } = await supabase
@@ -43,8 +61,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="p-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">{project?.name}</h1>
-        <p className="text-muted-foreground mt-2">{project?.description}</p>
+        <h1 className="text-3xl font-bold text-foreground">{project.name}</h1>
+        <p className="text-muted-foreground mt-2">{project.description}</p>
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
@@ -55,7 +73,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          <ProjectOverview project={project} teamMembers={teamMembers || []} auditLogs={auditLogs || []} />
+          <ProjectOverview
+            project={project}
+            teamMembers={teamMembers || []}
+            auditLogs={auditLogs || []}
+          />
         </TabsContent>
 
         <TabsContent value="team" className="space-y-6">
