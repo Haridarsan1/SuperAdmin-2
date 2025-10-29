@@ -52,7 +52,7 @@ export default async function ProjectDetailPage({
 
   // Get project activity
   const { data: auditLogs } = await supabase
-    .from("audit_logs")
+    .from("project_updates")
     .select("*")
     .eq("project_id", id)
     .order("created_at", { ascending: false })
@@ -76,7 +76,7 @@ export default async function ProjectDetailPage({
           <ProjectOverview
             project={project}
             teamMembers={teamMembers || []}
-            auditLogs={auditLogs || []}
+            recentUpdates={auditLogs || []}
           />
         </TabsContent>
 

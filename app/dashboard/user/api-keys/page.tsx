@@ -3,7 +3,8 @@ import { ApiKeysManager } from "@/components/user/api-keys-manager"
 
 export default async function ApiKeysPage() {
   const supabase = await createClient()
-  const { data: user } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
+  const user = data.user
 
   // Get user's API keys
   const { data: apiKeys } = await supabase

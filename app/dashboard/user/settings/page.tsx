@@ -17,7 +17,8 @@ import { Trash2 } from "lucide-react"
 
 export default async function SettingsPage() {
   const supabase = await createClient()
-  const { data: user } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
+  const user = data.user
 
   return (
     <div className="p-8 space-y-6">

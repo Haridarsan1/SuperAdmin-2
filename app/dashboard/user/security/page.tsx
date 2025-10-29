@@ -4,7 +4,8 @@ import { SessionManagement } from "@/components/user/session-management"
 
 export default async function SecurityPage() {
   const supabase = await createClient()
-  const { data: user } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
+  const user = data.user
 
   // Get user sessions
   const { data: sessions } = await supabase

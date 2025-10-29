@@ -39,7 +39,7 @@ export function TeamManagement({ projectId, teamMembers }: TeamManagementProps) 
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <Badge variant={member.role === "ADMIN" ? "default" : "secondary"}>{member.role}</Badge>
+                    <Badge variant={member.role === "LEAD" ? "default" : "secondary"}>{member.role}</Badge>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm">

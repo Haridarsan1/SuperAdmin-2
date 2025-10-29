@@ -3,13 +3,13 @@ import { ProjectsList } from "@/components/admin/projects-list"
 
 export default async function AdminProjectsPage() {
   const supabase = await createClient()
-  const { data: user } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
 
   // Get projects where user is admin
   const { data: projectMembers } = await supabase
     .from("project_members")
     .select("project_id")
-    .eq("user_id", user?.id)
+    .eq("user_id", data.user?.id)
     .eq("role", "ADMIN")
 
   const projectIds = projectMembers?.map((pm) => pm.project_id) || []

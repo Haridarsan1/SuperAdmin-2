@@ -1,14 +1,14 @@
-import type { Project, ProjectMember, AuditLog } from "@/lib/types"
+import type { Project, ProjectMember, ProjectUpdate } from "@/lib/types"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, Clock } from "lucide-react"
 
 interface ProjectOverviewProps {
   project: Project | null
   teamMembers: ProjectMember[]
-  auditLogs: AuditLog[]
+  recentUpdates: ProjectUpdate[]
 }
 
-export function ProjectOverview({ project, teamMembers, auditLogs }: ProjectOverviewProps) {
+export function ProjectOverview({ project, teamMembers, recentUpdates }: ProjectOverviewProps) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -29,7 +29,7 @@ export function ProjectOverview({ project, teamMembers, auditLogs }: ProjectOver
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{auditLogs.length}</div>
+            <div className="text-2xl font-bold">{recentUpdates.length}</div>
             <p className="text-xs text-muted-foreground">Actions in last 30 days</p>
           </CardContent>
         </Card>
@@ -62,13 +62,13 @@ export function ProjectOverview({ project, teamMembers, auditLogs }: ProjectOver
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {auditLogs.slice(0, 5).map((log) => (
-              <div key={log.id} className="flex items-start justify-between border-b pb-4 last:border-0">
+            {recentUpdates.slice(0, 5).map((update) => (
+              <div key={update.id} className="flex items-start justify-between border-b pb-4 last:border-0">
                 <div>
-                  <p className="font-medium text-sm">{log.action}</p>
-                  <p className="text-xs text-muted-foreground">{log.resource_type}</p>
+                  <p className="font-medium text-sm">{update.title}</p>
+                  <p className="text-xs text-muted-foreground">{update.update_type}</p>
                 </div>
-                <p className="text-xs text-muted-foreground">{new Date(log.created_at).toLocaleDateString()}</p>
+                <p className="text-xs text-muted-foreground">{new Date(update.created_at).toLocaleDateString()}</p>
               </div>
             ))}
           </div>

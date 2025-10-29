@@ -47,7 +47,7 @@ export function UsersTable({ users }: UsersTableProps) {
                       className={`px-2 py-1 rounded text-xs font-medium ${
                         user.role === "SUPERADMIN"
                           ? "bg-purple-500/20 text-purple-500"
-                          : user.role === "ADMIN"
+                          : user.role === "MANAGER"
                             ? "bg-blue-500/20 text-blue-500"
                             : "bg-gray-500/20 text-gray-500"
                       }`}

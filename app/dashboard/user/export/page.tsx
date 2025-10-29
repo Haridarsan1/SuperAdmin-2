@@ -3,7 +3,8 @@ import { DataExport } from "@/components/user/data-export"
 
 export default async function ExportPage() {
   const supabase = await createClient()
-  const { data: user } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
+  const user = data.user
 
   // Get user data summary
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user?.id).single()

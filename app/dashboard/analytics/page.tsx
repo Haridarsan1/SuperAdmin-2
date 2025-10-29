@@ -10,7 +10,7 @@ export default async function AnalyticsPage() {
     .select("*")
     .order("created_at", { ascending: false })
 
-  const { data: auditLogs } = await supabase.from("audit_logs").select("*").order("created_at", { ascending: false })
+  const { data: auditLogs } = await supabase.from("project_updates").select("*").order("created_at", { ascending: false })
 
   return (
     <div className="p-8 space-y-6">

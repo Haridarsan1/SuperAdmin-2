@@ -3,7 +3,8 @@ import { NotificationsCenter } from "@/components/user/notifications-center"
 
 export default async function NotificationsPage() {
   const supabase = await createClient()
-  const { data: user } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
+  const user = data.user
 
   // Get user's notifications
   const { data: notifications } = await supabase

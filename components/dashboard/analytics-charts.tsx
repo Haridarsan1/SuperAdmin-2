@@ -1,12 +1,12 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { LoginActivity, AuditLog } from "@/lib/types"
+import type { LoginActivity, ProjectUpdate } from "@/lib/types"
 import { format } from "date-fns"
 
 interface AnalyticsChartsProps {
   loginActivity: LoginActivity[]
-  auditLogs: AuditLog[]
+  auditLogs: ProjectUpdate[]
 }
 
 export function AnalyticsCharts({ loginActivity, auditLogs }: AnalyticsChartsProps) {
@@ -26,11 +26,11 @@ export function AnalyticsCharts({ loginActivity, auditLogs }: AnalyticsChartsPro
 
   const actionCounts = auditLogs.reduce(
     (acc, log) => {
-      const existing = acc.find((a) => a.action === log.action)
+      const existing = acc.find((a) => a.action === log.update_type)
       if (existing) {
         existing.count++
       } else {
-        acc.push({ action: log.action, count: 1 })
+        acc.push({ action: log.update_type, count: 1 })
       }
       return acc
     },

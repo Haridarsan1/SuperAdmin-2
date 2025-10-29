@@ -5,17 +5,18 @@ import { UserActivity } from "@/components/user/user-activity"
 
 export default async function UserDashboard() {
   const supabase = await createClient()
-  const { data: user } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
+  const user = data.user
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user?.user?.id).single()
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user?.id).single()
 
   // Fallback profile if database query fails
   const userProfile = profile || {
-    id: user?.user?.id || '',
-    email: user?.user?.email || '',
-    username: user?.user?.user_metadata?.username || user?.user?.email?.split('@')[0] || 'User',
-    first_name: user?.user?.user_metadata?.first_name || null,
+    id: user?.id || '',
+    email: user?.email || '',
+    username: user?.user_metadata?.username || user?.email?.split('@')[0] || 'User',
+    first_name: user?.user_metadata?.first_name || null,
     last_name: null,
     avatar_url: null,
     role: 'USER' as const,
@@ -24,7 +25,7 @@ export default async function UserDashboard() {
   }
 
   // Get projects where user is a member
-  const { data: projectMembers } = await supabase.from("project_members").select("project_id").eq("user_id", user?.user?.id)
+  const { data: projectMembers } = await supabase.from("project_members").select("project_id").eq("user_id", user?.id)
 
   const projectIds = projectMembers?.map((pm) => pm.project_id) || []
 
@@ -39,7 +40,7 @@ export default async function UserDashboard() {
   const { data: loginActivity } = await supabase
     .from("login_activity")
     .select("*")
-    .eq("user_id", user?.user?.id)
+    .eq("user_id", user?.id)
     .order("created_at", { ascending: false })
     .limit(10)
 
