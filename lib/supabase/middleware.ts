@@ -29,8 +29,18 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Redirect unauthenticated users to login (except for auth pages)
-  if (!user && !request.nextUrl.pathname.startsWith("/auth") && request.nextUrl.pathname !== "/") {
+  // Allow access to auth pages and home page without authentication
+  const isAuthPage = request.nextUrl.pathname.startsWith("/auth")
+  const isHomePage = request.nextUrl.pathname === "/"
+  
+  // Special handling for reset password page - allow access if there are reset tokens in URL or hash
+  const isResetPasswordPage = request.nextUrl.pathname === "/auth/reset-password"
+  const hasResetTokens = request.nextUrl.searchParams.has("access_token") || 
+                        request.nextUrl.searchParams.has("type") || 
+                        request.nextUrl.hash.includes("access_token")
+  
+  // Redirect unauthenticated users to login (except for auth pages, home page, or reset password with tokens)
+  if (!user && !isAuthPage && !isHomePage && !(isResetPasswordPage && hasResetTokens)) {
     const url = request.nextUrl.clone()
     url.pathname = "/auth/login"
     return NextResponse.redirect(url)
